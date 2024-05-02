@@ -1,0 +1,1102 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta content="text/html;charset=utf-8" http-equiv="Content-Type">
+  <meta content="utf-8" http-equiv="encoding">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+<title>iNaturalist Social Network</title>
+<link rel="shortcut icon" href="#">
+<link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+<link rel="stylesheet" href="https://jqueryui.com/resources/demos/style.css">
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css"/>
+<link href="https://fonts.googleapis.com/css?family=Open+Sans" rel="stylesheet">
+
+ <script src="https://maps.google.com/maps/api/js?v=3&key=AIzaSyCYVjUrls2J38zEYEjQkZYn3PSUsDDJJ9U&amp&callback=Function.prototype"></script>
+
+<!-- Make sure you put this AFTER Leaflet's CSS -->
+<script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
+<!-- Make sure you put this AFTER leaflet.js -->
+<script src="https://cdn.jsdelivr.net/npm/leaflet.geodesic"></script>
+<script src='https://unpkg.com/leaflet.repeatedmarkers@latest/Leaflet.RepeatedMarkers.js'></script>
+
+<script src="http://leaflet.github.io/Leaflet.heat/dist/leaflet-heat.js"></script>
+
+<!-- NEED A CUSTOMIZED VERSION See: https://github.com/Leaflet/Leaflet/issues/6789 -->
+<script src="js/Leaflet.VectorGrid.bundled.js"></script>
+<!-- <script src="https://unpkg.com/leaflet.vectorgrid@latest/dist/Leaflet.VectorGrid.js"></script>
+-->
+<!-- https://github.com/davidbau/seedrandom -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/seedrandom/3.0.5/seedrandom.min.js"></script>
+
+<script src="https://d3js.org/d3.v3.min.js" charset="utf-8"></script>
+
+<script src="//unpkg.com/three@0.147.0"></script> <!-- the newest version 0.148.0 cannot be fetched at the moment -->
+<script src="//unpkg.com/three@0.147.0/examples/js/renderers/CSS2DRenderer.js"></script>
+<script src="//unpkg.com/three-spritetext"></script>
+<script src="//unpkg.com/force-graph"></script>
+<script src="//unpkg.com/3d-force-graph"></script>
+
+<script src="//unpkg.com/d3-dsv"></script>
+<script src="//unpkg.com/index-array-by"></script>
+<script src="//unpkg.com/globe.gl"></script>
+
+<script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+
+<!-- this contains network analysis algorithms (graph theory) -->
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/cytoscape/3.18.2/cytoscape.min.js"></script>
+<!-- <script src="js/cy/cytoscape.min.js"></script>
+<script src="js/cy/cola.js"></script>
+<script src="js/cy/cytoscape-cola.js"></script>
+-->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-csv/0.71/jquery.csv-0.71.min.js"></script>
+<!--
+<script src="https://raw.githubusercontent.com/jstat/jstat/1.x/dist/jstat.min.js"></script>
+-->
+<script src="js/jstat.min.js"></script>
+
+
+<link rel="stylesheet" href="css/d3network.css"/>
+<link rel="stylesheet" href="css/histogram_scatter.css">
+<link rel="stylesheet" href="css/d3pielandcover.css">
+<link rel="stylesheet" href="css/d3piekingdom.css">
+
+<script>
+
+function show_panel(id){
+   $('#'+id).show();
+ }
+
+function hide_panel(id){
+  $('#'+id).hide();
+ }
+
+function toggle_ctrl_cb(cb, id){
+  if(cb.checked){
+      show_panel(id);
+   }
+  else{
+      hide_panel(id)
+   }
+}
+
+function toggle_view_rd(rd){
+    ///*
+    if(rd.id == "ctrmap"){ // hide config panel in map view
+
+        if(MODE3D){
+          show_panel("globe");
+        }else{
+          show_panel("mapbox");
+          myMap.invalidateSize();
+        }
+
+        //$("#networkconfigs").hide();
+        //$("#btn_config_x").trigger("click");
+
+        //$("#3dmode").prop( "disabled", true );
+
+        $("#circlenoderd").prop( "disabled", true );
+        $("#textnoderd").prop( "disabled", true );
+        $("#imagenoderd").prop( "disabled", true );
+
+        //$("#3dmodelabel").css("color", "gray");
+
+        $("#circlenoderdlabel").css("color", "gray");
+        $("#textnoderdlabel").css("color", "gray");
+        $("#imagenoderdlabel").css("color", "gray");
+
+        hide_panel("network3d");
+        hide_panel("network");
+
+    }
+    else{ //rd.id == "network"
+
+      hide_panel("globe");
+      hide_panel("mapbox");
+
+      //$("#networkconfigs").show();
+      //$("#3dmode").prop( "disabled", false );
+
+      $("#circlenoderd").prop( "disabled", false );
+      $("#textnoderd").prop( "disabled", false );
+      $("#imagenoderd").prop( "disabled", false );
+
+      //$("#3dmodelabel").css("color", "black");
+
+      $("#circlenoderdlabel").css("color", "black");
+      $("#textnoderdlabel").css("color", "black");
+      $("#imagenoderdlabel").css("color", "black");
+
+      if(MODE3D){
+        show_panel("network3d");
+      }else{
+        show_panel("network");
+      }
+    }
+ }
+
+
+ function toggle_mode_rd(rd){
+   if(rd.id == "ctr3d"){
+     MODE3D = true;
+     update_ntanalysis_visualization();
+     if($("#ctrmap").prop("checked")){
+       $("#globe").show();
+       $("#mapbox").hide();
+     }else{ //($("#ctrnetwork").prop("checked"))
+       $("#network3d").show();
+       $("#network").hide();
+     }
+   }else{
+     MODE3D = false;
+     update_ntanalysis_visualization();
+     if($("#ctrmap").prop("checked")){
+       $("#globe").hide();
+
+       $("#mapbox").show();
+       myMap.invalidateSize();
+     }else{ //($("#ctrnetwork").prop("checked"))
+       $("#network3d").hide();
+       $("#network").show();
+     }
+   }
+ }
+
+$(document).ready(function(){
+
+  // minimize, maximize
+  $("#btn_histogram").click(function(){
+			//console.log("clicked")
+			if($(this).html() == "-"){
+				$(this).html("+");
+			}
+			else{
+				$(this).html("-");
+			}
+			$("#histogram").slideToggle();
+			});
+
+			$("#btn_histogram_x").click(function(){
+				$("#histogrampanel").hide();
+				$("#ctrhistogram").prop("checked", false);
+			});
+
+      $("#btn_scatter").click(function(){
+			//console.log("clicked")
+			if($(this).html() == "-"){
+				$(this).html("+");
+			}
+			else{
+				$(this).html("-");
+			}
+			$("#scatter").slideToggle();
+			});
+
+			$("#btn_scatter_x").click(function(){
+				$("#scatterpanel").hide();
+				$("#ctrscatter").prop("checked", false);
+			});
+
+  $("#btn_attri").click(function(){
+    $("#attri").slideToggle();
+    if($(this).html() == "-"){
+        $(this).html("+");
+    }
+    else{
+        $(this).html("-");
+    }
+  });
+
+  $("#btn_config").click(function(){
+    $("#configs").slideToggle();
+    if($(this).html() == "-"){
+        $(this).html("+");
+    }
+    else{
+        $(this).html("-");
+    }
+  });
+
+  $("#btn_query").click(function(){
+    $("#query").slideToggle();
+    if($(this).html() == "-"){
+        $(this).html("+");
+    }
+    else{
+        $(this).html("-");
+    }
+  });
+
+  $("#btn_filters").click(function(){
+    $("#filters").slideToggle();
+    if($(this).html() == "-"){
+        $(this).html("+");
+    }
+    else{
+        $(this).html("-");
+    }
+  });
+
+  $("#btn_options").click(function(){
+    $("#options").slideToggle();
+    if($(this).html() == "-"){
+        $(this).html("+");
+    }
+    else{
+        $(this).html("-");
+    }
+  });
+
+  $("#btn_attri_x").click(function(){
+    $("#attripanel").hide();
+    $("#ctrattri").prop("checked", false);
+  });
+
+  $("#btn_config_x").click(function(){
+    $("#configpanel").hide();
+    $("#ctrconfig").prop("checked", false);
+  });
+
+  $("#btn_control").click(function(){
+    //console.log("clicked")
+    if($(this).html() == "-"){
+        $(this).html("+");
+    }
+    else{
+        $(this).html("-");
+    }
+    $("#control").slideToggle();
+  });
+
+})
+</script>
+
+</head>
+<body>
+
+  <!-- added Dec 11 2023 below-->
+  <div id="histogrampanel" class="floatingpanel">
+    <div id="histogrampanelheader">
+      <b>Distriution of Network Attributes</b><div id="btn_histogram_x">x</div><div id="btn_histogram">-</div>
+    </div>
+  
+    <div id="histogram">
+      
+      <div id="params_histogram">
+        <input type="radio" id="node_histogram" name="histogram" unchecked onclick="toggle_histogram_radio(this)">
+            <label for="histogram">Node</label>
+            <input type="radio" id="edge_histogram" name="histogram" checked onclick="toggle_histogram_radio(this)">
+            <label for="histogram">Edge</label>
+  
+        &nbsp;|&nbsp;
+  
+        <label>Attribute: </label>
+        <select id="attr_histogram">
+          <option value="weight" selected>Id. interactions</option>
+          <option value="distance">Geographic distance</option>
+
+          <option value="taxon_similarity_obs_ids">Taxon similarity</option>
+          <option value="landcover_similarity_obs_ids">Landcover similarity</option>
+          
+          <!--
+          <option value="taxon_similarity_obs_obs">TaxonSim[obs-obs]</option>
+          <option value="taxon_similarity_ids_obs">TaxonSim[ids-obs]</option>
+          <option value="taxon_similarity_ids_ids">TaxonSim[ids-ids]</option>
+
+          
+          <option value="landcover_similarity_obs_obs">LandcSim[obs-obs]</option>
+          <option value="landcover_similarity_ids_obs">LandcSim[ids-obs]</option>
+          <option value="landcover_similarity_ids_ids">LandcSim[ids-ids]</option>
+          -->
+        </select>
+        &nbsp;
+        
+        <input type="number" min="5" max="200" step="5" value="20" id="nBin_histogram">
+        <label>Bins</label>
+      </div>
+  
+      <div id="histogramsvg"></div>		
+  
+    </div>
+  
+  </div>
+
+  <div id="scatterpanel"  class="floatingpanel">
+    <div id="scatterpanelheader">
+      <b>Correlation of Network Attributes</b><div id="btn_scatter_x">x</div><div id="btn_scatter">-</div>
+    </div>
+      <div id="scatter">
+          
+  
+          <div id="params_scatter">
+            <span>
+              <input type="radio" id="node_scatter" name="scatter" unchecked onclick="toggle_scatter_radio(this)">
+              <label for="scatter">Node</label>
+              <input type="radio" id="edge_scatter" name="scatter" checked onclick="toggle_scatter_radio(this)">
+              <label for="scatter">Edge</label>
+  
+              &nbsp;|&nbsp;
+
+              <label>Y</label>
+              <select id="attr_scatter_y">
+                  <option value="weight" selected>Id.  interactions</option>
+                  <option value="distance">Geographic distance</option>
+                  <option value="taxon_similarity_obs_ids">Taxon similarity</option>
+                  <option value="landcover_similarity_obs_ids">Landcover similarity</option>
+                  <!--
+                  <option value="taxon_similarity_obs_ids">TaxonSim[obs-ids]</option>
+                  <option value="taxon_similarity_obs_obs">TaxonSim[obs-obs]</option>
+                  <option value="taxon_similarity_ids_obs">TaxonSim[ids-obs]</option>
+                  <option value="taxon_similarity_ids_ids">TaxonSim[ids-ids]</option>
+
+                  <option value="landcover_similarity_obs_ids">LandcSim[obs-ids]</option>
+                  <option value="landcover_similarity_obs_obs">LandcSim[obs-obs]</option>
+                  <option value="landcover_similarity_ids_obs">LandcSim[ids-obs]</option>
+                  <option value="landcover_similarity_ids_ids">LandcSim[ids-ids]</option>
+                  -->
+              </select>
+              &nbsp;
+              <label>X</label>
+              <select id="attr_scatter_x">
+                  <option value="weight">Id.  interactions</option>
+                  <option value="distance" selected>Geographic distance</option>
+                  <option value="taxon_similarity_obs_ids">Taxon similarity</option>
+                  <option value="landcover_similarity_obs_ids">Landcover similarity</option>
+                  <!--
+                  <option value="taxon_similarity_obs_ids">TaxonSim[obs-ids]</option>
+                  <option value="taxon_similarity_obs_obs">TaxonSim[obs-obs]</option>
+                  <option value="taxon_similarity_ids_obs">TaxonSim[ids-obs]</option>
+                  <option value="taxon_similarity_ids_ids">TaxonSim[ids-ids]</option>
+
+                  <option value="landcover_similarity_obs_ids">LandcSim[obs-ids]</option>
+                  <option value="landcover_similarity_obs_obs">LandcSim[obs-obs]</option>
+                  <option value="landcover_similarity_ids_obs">LandcSim[ids-obs]</option>
+                  <option value="landcover_similarity_ids_ids">LandcSim[ids-ids]</option>
+                  -->
+              </select>
+            </span>
+            <br>
+              <span>
+                  
+                  <input id="binningxcb" type="checkbox" unchecked onchange=toggle_binningxcb(this) title="Correlation based on binned X.">
+                  <label for="binningxcb">Bin X</label>
+                  &nbsp;
+                  <input type="number" min="1" max="200" step="5" value="20" id="nBin_scatter" disabled onchange=draw_scatter()>
+                  <label>Bins</label>
+              </span>
+          </div>
+  
+          <div id="scattersvg"></div>
+  
+      </div>
+  
+  </div>
+  <!-- added Dec 11 2023 above -->
+
+  <div id="attripanel" class="attripanel">
+  <div id="attripanelheader">
+    <b>iNaturalist Spatial Social Network</b><div id="btn_attri_x">x</div><div id="btn_attri">-</div>
+  </div>
+  <div id="attri">
+    <p>Dr. Guiming Zhang (guiming.zhang@du.edu)</p><p>Department of Geography & the Environment</p>
+  </div>
+  </div>
+
+  <div id="controlpanel" class="controlpanel">
+    <div id="controlpanelheader">
+      <b>Show panels</b><div id="btn_control">-</div>
+    </div>
+    <div id="control">
+        <table>
+            <tr>
+                <td id="networkconfigs">
+                    <input id="ctrconfig" type="checkbox" checked onchange=toggle_ctrl_cb(this,'configpanel')>
+                    <label for="ctrconfig">Configs</label>
+                </td>
+
+                <td>
+                    <!--<label>View:</label>-->
+                    <input type="radio" id="ctrnetwork" name="viewrd" checked onchange=toggle_view_rd(this)>
+                    <label for="ctrnetwork">Network</label>
+                    <input  type="radio" id="ctrmap" name="viewrd" onchange=toggle_view_rd(this)>
+                    <label for="ctrnetmap">Map</label>
+                    
+                    &nbsp;|&nbsp;
+
+                    <!--<label>Mode:</label>-->
+                    <input type="radio" id="ctr3d" name="moderd" checked onchange=toggle_mode_rd(this)>
+                    <label for="ctr3d">3D</label>
+                    <input  type="radio" id="ctr2d" name="moderd" onchange=toggle_mode_rd(this)>
+                    <label for="ctr2d">2D</label>
+
+                  </td>
+
+                <td>
+                    <!--<label>Mode:</label>-->
+                    <input type="checkbox" id="ctrhistogram" name="histogramcb" unchecked onchange=toggle_ctrl_cb(this,'histogrampanel')>
+                    <label for="ctrhistogram">Distribution</label>
+                    <input  type="checkbox" id="ctrscatter" name="scattercb" unchecked onchange=toggle_ctrl_cb(this,'scatterpanel')>
+                    <label for="ctrscatter">Correlation</label>
+                </td>
+
+                <td>
+                    <input id="ctrattri" type="checkbox" unchecked onchange=toggle_ctrl_cb(this,'attripanel')><label for="ctrattri">Attribution </label>
+                </td>
+
+            </tr>
+        </table>
+      </div>
+  </div>
+
+  <div id="configpanel" class="floatingpanel">
+    <div id="configpanelheader">
+      <b>Configurations</b><div id="btn_config_x">x</div><div id="btn_config">-</div>
+    </div>
+    <p></p>
+    <div id="configs">
+
+      <div id="querydiv">
+        <div id="querydivheader">
+          <b>Network</b><div id="btn_query">-</div>
+        </div>
+
+        <div id="query">
+          <p>
+              <!--
+              <label for="datestart">From </label><input id="datestart" type="date" value="2011-01-01">
+              <label for="dateend">to </label><input id="dateend" type="date" value="2011-12-31">
+            -->
+
+              <label for="csvfilelist" id="csvfilelistlabel">Dataset </label>
+              <select id="csvfilelist" style="width:70%;">
+                <option>network.csv</option>
+              </select>
+
+              <input id="submit" type="button" value="Update" onclick=update_all()></p>
+        </div>
+
+      </div>
+      <p></p>
+      <div id="filtersdiv">
+
+          <div id="filtersdivheader">
+            <b>Filters</b><div id="btn_filters">-</div>
+          </div>
+
+          <div id="filters">
+            <p>
+              <input id="geocb" type="checkbox" unchecked onchange=toggle_geocb(this)>
+              <label>Geo nodes only</label>
+            </p>
+            <p>
+              <label for="distinput" id="distlabel">Distance (km) &le; </label>
+              <input type="number" id="distinput" value="100", min="1" max="100" disabled>
+              &nbsp;
+              <label id="distmin">1</label>
+              <input type="range" min="1" max="100" value="100" class="slider" id="distslider" disabled>
+              <label id="distmax">100</label>
+            </p>
+            <p style="display:block;">
+              <label for="componentsizethreshold" id="componentsizethresholdlabel">Components with size &ge; </label>
+              <select id="componentsizethreshold">
+                <option value="0">1 node - (all components)</option>
+              </select>
+            </p>
+
+            <p>
+              <label for="community" id="communitylabel">Detected communities</label>
+              <select id="community">
+                <option value="-1">All communities</option>
+              </select>
+            </p>
+
+            <p>
+                <label for="thresholdinput" id="thresholdlabel">Link weight &ge; </label>
+                <input type="number" id="thresholdinput" value="1", min="1" max="100">
+                &nbsp;
+                <label id="thresholdmin">1</label>
+                <input type="range" min="1" max="100" value="1" class="slider" id="thresholdslider">
+                <label id="thresholdmax">100</label>
+            </p>
+
+            <p>
+              <label for="username">Foci node: </label><input id="username" value="All Users">
+            </p>
+            <p>
+              <input id="focinodecb" type="checkbox" unchecked onchange=toggle_focinodecb(this)>
+              <label id="focinodecblbl" for="focinodecb">Links with foci only</label>
+              &nbsp;|&nbsp;
+              <label for="graphstep" id="graphsteplabel">Steps from foci &le; </label>
+              <!--<input type="number" id="graphstep" value="1", min="1" max="10"> -->
+              <select id="graphstep">
+                <option value='1'>1</option>
+              </select>
+            </p>
+          </div>
+
+        </div>
+
+        <p></p>
+
+        <div id="optionsdiv">
+            <div id="optionsdivheader">
+              <b>Node Options</b><div id="btn_options">-</div>
+            </div>
+          <div id="options">
+            <p>
+              <label>Size:</label>
+              <input type="radio" id="observationsrd" name="nodesize" onchange="toggle_nodesize_radio(this)">
+              <label for="nodesize">Observations</label>
+              <input type="radio" id="identificationsrd" name="nodesize" checked onchange="toggle_nodesize_radio(this)">
+              <label for="nodesize">Identifications</label>
+              <input type="radio" id="pagerankrd" name="nodesize" onchange="toggle_nodesize_radio(this)">
+              <label for="nodesize">Pagerank</label>
+            </p>
+
+            <p>
+            <label>Color:</label>
+            <input type="radio" id="nodeidrd" name="nodecolor" checked onchange="toggle_nodecolor_radio(this)">
+            <label for="nodecolor">ID</label>            
+            <input type="radio" id="componentidrd" name="nodecolor" onchange="toggle_nodecolor_radio(this)">
+            <label for="nodecolor">Component</label>
+            <input type="radio" id="clusteridrd" name="nodecolor" onchange="toggle_nodecolor_radio(this)">
+            <label for="nodecolor">Cluster</label>
+            <input type="radio" id="communityidrd" name="nodecolor" onchange="toggle_nodecolor_radio(this)">
+            <label for="nodecolor">Community</label>
+            <br>&emsp;&emsp;&ensp;
+            <input type="radio" id="toplandcoverrd" name="nodecolor" onchange="toggle_nodecolor_radio(this)">
+            <label for="nodecolor">Majority landcover</label>
+            <input type="radio" id="toptaxonrd" name="nodecolor" onchange="toggle_nodecolor_radio(this)">
+            <label for="nodecolor">Majority species taxon</label>
+          </p>
+
+          <p>
+              <label>Shape:</label>
+              <input type="radio" id="circlenoderd" name="nodeshape" checked onchange="toggle_nodeshape_radio(this)">
+              <label id="circlenoderdlabel" for="nodeshape">Circle</label>
+              <input type="radio" id="textnoderd" name="nodeshape" onchange="toggle_nodeshape_radio(this)">
+              <label id="textnoderdlabel" for="nodeshape">Text</label>
+              <input type="radio" id="imagenoderd" name="nodeshape" onchange="toggle_nodeshape_radio(this)">
+              <label id="imagenoderdlabel" for="nodeshape">Image</label>
+          </p>
+          <p>
+              <!--
+              <input id="3dmode" type="checkbox" checked onchange=toggle_3dmodecb(this)>
+              <label id="3dmodelabel" for="3dmode">3D</label>
+              &nbsp;|&nbsp; -->
+              <input id="mousequery" type="checkbox" checked onchange=toggle_mousequerycb(this)>
+              <label for="mousequery">Mouseover popup</label>
+                &nbsp;|&nbsp;
+              <input id="nodevisibilitycb" type="checkbox" unchecked disabled onchange=toggle_nodevisibilitycb(this)>
+              <label id="nodevisibilitycblbl" for="nodevisibilitycb">No dangling nodes</label>
+          </p>
+        </div>
+
+      </div>
+
+    </div>
+
+  </div>
+
+  <div id="mapbox"></div>
+
+  <div id="network"></div>
+  <div id="network3d"></div>
+  <div id="cynetwork"></div>
+  <div id="globe"></div>
+
+<script>
+
+function toggle_scatter_radio(radio){
+  // to be done
+  console.log(radio.id)
+  $('#attr_scatter_x').find('option').remove().end();
+  $('#attr_scatter_y').find('option').remove().end();
+
+  if(radio.id==="node_scatter"){
+
+    $('#attr_scatter_x')
+      .append($("<option selected></option>").attr("value", "size").text("Species identifications"));
+    $('#attr_scatter_x')
+      .append($("<option></option>").attr("value", "resgradobs").text("Species observations"));
+    $('#attr_scatter_x')
+      .append($("<option></option>").attr("value", "pagerank").text("Page Rank"));
+    $('#attr_scatter_x')
+    .append($("<option></option>").attr("value", "degree").text("Degree"));
+    $('#attr_scatter_x')
+    .append($("<option></option>").attr("value", "indegree").text("In-degree"));
+    $('#attr_scatter_x')
+    .append($("<option></option>").attr("value", "outdegree").text("Out-degree"));
+    /*
+    $('#attr_scatter_x')
+    .append($("<option></option>").attr("value", "betweenness").text("Betweenness"));
+    $('#attr_scatter_x')
+    .append($("<option></option>").attr("value", "closeness").text("Closeness")); 
+    */
+    $('#attr_scatter_y')
+      .append($("<option></option>").attr("value", "size").text("Species identifications"));
+    $('#attr_scatter_y')
+      .append($("<option selected></option>").attr("value", "resgradobs").text("Species observations"));
+    $('#attr_scatter_y')
+      .append($("<option></option>").attr("value", "pagerank").text("Page Rank"));
+    $('#attr_scatter_y')
+    .append($("<option></option>").attr("value", "degree").text("Degree"));
+    $('#attr_scatter_y')
+    .append($("<option></option>").attr("value", "indegree").text("In-degree"));
+    $('#attr_scatter_y')
+    .append($("<option></option>").attr("value", "outdegree").text("Out-degree"));
+    /*
+    $('#attr_scatter_y')
+    .append($("<option></option>").attr("value", "betweenness").text("Betweenness"));
+    $('#attr_scatter_y')
+    .append($("<option></option>").attr("value", "closeness").text("Closeness")); 
+    */
+  }else{
+    $('#attr_scatter_x')
+      .append($("<option selected></option>").attr("value", "distance").text("Geographic distance"));
+    $('#attr_scatter_x')
+      .append($("<option></option>").attr("value", "weight").text("Id. interactions"));
+    $('#attr_scatter_x')
+      .append($("<option></option>").attr("value", "taxon_similarity_obs_ids").text("Taxon similarity"));
+    $('#attr_scatter_x')
+      .append($("<option></option>").attr("value", "landcover_similarity_obs_ids").text("Landcover similarity"));
+
+    $('#attr_scatter_y')
+      .append($("<option></option>").attr("value", "distance").text("Geographic distance"));      
+    $('#attr_scatter_y')
+      .append($("<option selected></option>").attr("value", "weight").text("Id. interactions"));
+    $('#attr_scatter_y')
+      .append($("<option></option>").attr("value", "taxon_similarity_obs_ids").text("Taxon similarity"));
+    $('#attr_scatter_y')
+      .append($("<option></option>").attr("value", "landcover_similarity_obs_ids").text("Landcover similarity"));
+  }
+  draw_scatter();
+}
+
+function toggle_binningxcb(cb){
+    // to be done
+    console.log("binning x:", cb.checked)
+    if(cb.checked){
+        $("#nBin_scatter").prop("disabled", false);
+        draw_scatter();
+    }
+    else{
+        $("#nBin_scatter").prop("disabled", true);
+        draw_scatter();
+    }
+}
+
+// Listen to the button -> update if user change it
+d3.select("#attr_scatter_x").on("change", function() {
+    //draw_scatter(this.value, $("#scatter_attr_y option:checked")[0].value);
+    draw_scatter();
+});
+
+// Listen to the button -> update if user change it
+d3.select("#attr_scatter_y").on("change", function() {
+    //draw_scatter($("#scatter_attr_x option:checked")[0].value, this.value);
+    draw_scatter();
+});
+
+function toggle_histogram_radio(radio){
+  // to be done
+  console.log(radio.id)
+  $('#attr_histogram').find('option').remove().end();
+
+  if(radio.id==="node_histogram"){
+    $('#attr_histogram')
+      .append($("<option selected></option>").attr("value", "resgradobs").text("Species observations"));
+    $('#attr_histogram')
+      .append($("<option></option>").attr("value", "size").text("Species identifications"));
+    $('#attr_histogram')
+    .append($("<option></option>").attr("value", "pagerank").text("Page Rank"));
+
+    $('#attr_histogram')
+    .append($("<option></option>").attr("value", "degree").text("Degree"));
+    $('#attr_histogram')
+    .append($("<option></option>").attr("value", "indegree").text("In-degree"));
+    $('#attr_histogram')
+    .append($("<option></option>").attr("value", "outdegree").text("Out-degree"));
+    /*
+    $('#attr_histogram')
+    .append($("<option></option>").attr("value", "betweenness").text("Betweenness"));
+    $('#attr_histogram')
+    .append($("<option></option>").attr("value", "closeness").text("Closeness"));  
+    */
+    $('#attr_histogram')
+    .append($("<option></option>").attr("value", "landcover_distribution_obs_vector").text("Landcover (obs)"));
+
+    $('#attr_histogram')
+    .append($("<option></option>").attr("value", "landcover_distribution_ids_vector").text("Landcover (ids)"));
+
+    $('#attr_histogram')
+    .append($("<option></option>").attr("value", "taxon_distribution_obs_vector").text("Taxon (obs)"));
+
+    $('#attr_histogram')
+    .append($("<option></option>").attr("value", "taxon_distribution_ids_vector").text("Taxon (ids)"));
+
+  }else{
+    $('#attr_histogram')
+      .append($("<option selected></option>").attr("value", "weight").text("Id. interactions"));
+    $('#attr_histogram')
+      .append($("<option></option>").attr("value", "distance").text("Geographic distance"));
+    $('#attr_histogram')
+      .append($("<option></option>").attr("value", "taxon_similarity_obs_ids").text("Taxon similarity"));
+    $('#attr_histogram')
+      .append($("<option></option>").attr("value", "landcover_similarity_obs_ids").text("Landcover similarity"));
+  }
+
+  draw_histogram();
+}
+	
+// Listen to the button -> update if user change it
+d3.select("#nBin_histogram").on("input", function() {
+  //draw_histogram(+this.value, $("#attr_histogram option:checked")[0].value);
+  draw_histogram();
+});
+
+// Listen to the button -> update if user change it
+d3.select("#attr_histogram").on("change", function() {
+  //draw_histogram(+$("#nBin_histogram").val(), this.value);
+
+  attrs_piechart_landcover = ["landcover_distribution_obs_vector", "landcover_distribution_ids_vector"];
+  attrs_piechart_taxon = ["taxon_distribution_obs_vector", "taxon_distribution_ids_vector"];
+
+  if(attrs_piechart_landcover.includes($("#attr_histogram option:checked")[0].value)){
+    $("#nBin_histogram").prop( "disabled", true );
+    draw_piechart_landcover();
+  }else if(attrs_piechart_taxon.includes($("#attr_histogram option:checked")[0].value)){
+    $("#nBin_histogram").prop( "disabled", true );
+    draw_piechart_kingdom();
+  }
+  else{
+    $("#nBin_histogram").prop( "disabled", false );
+    draw_histogram();
+  }
+});
+
+
+var distslider = document.getElementById("distslider");
+var distinput = document.getElementById("distinput");
+distslider.value = distinput.value;
+
+distslider.oninput = function() {
+  distinput.value = distslider.value;
+}
+
+distslider.onchange = function() {
+  DISTTHRESHOLD = distslider.value;
+  if(DISTTHRESHOLD < parseInt($("#distslider")[0].max)){
+    $("#nodevisibilitycb").prop("disabled", false);
+    $("#nodevisibilitycblbl").css("color", "black");
+  }
+  update_data_ntanalysis_visualization();
+}
+
+distinput.onchange = function() {
+  DISTTHRESHOLD = distinput.value;
+  distslider.value = distinput.value;
+  console.log("DISTTHRESHOLD", DISTTHRESHOLD)
+  if(DISTTHRESHOLD < parseInt($("#distslider")[0].max)){
+    $("#nodevisibilitycb").prop("disabled", false);
+    $("#nodevisibilitycblbl").css("color", "black");
+  }
+
+  update_data_ntanalysis_visualization();
+}
+
+function toggle_geocb(cb){
+  $( "#username" )[0].value = "All Users";
+  foci_user = "All Users";
+
+  if(cb.checked){  
+    GEOMODE = true;
+    $("#distinput").prop("disabled", false);
+    $("#distlabel").css("color", "black");
+    $("#distslider").prop("disabled", false);
+    $("#distmin").css("color", "black");
+    $("#distmax").css("color", "black");
+
+    //update_geodata_ntanalysis_visualization();
+  }else{
+    GEOMODE = false;
+    $("#distinput").prop("disabled", true);
+    $("#distlabel").css("color", "gray");
+    $("#distslider").prop("disabled", true);
+    $("#distmin").css("color", "gray");
+    $("#distmax").css("color", "gray");
+    //update_geodata_ntanalysis_visualization();
+  }
+  update_geodata_ntanalysis_visualization();
+}
+
+
+var slider = document.getElementById("thresholdslider");
+var input = document.getElementById("thresholdinput");
+var graphstepselect = document.getElementById("graphstep");
+var componentsizethresholdselect = document.getElementById("componentsizethreshold");
+var communityselect = document.getElementById("community");
+
+input.value = slider.value;
+
+slider.oninput = function() {
+  input.value = slider.value;
+}
+
+slider.onchange = function() {
+  LINK_WEIGHT_THRESHOD = slider.value;
+  //input.value = slider.value;
+  if(LINK_WEIGHT_THRESHOD >1){
+    $("#nodevisibilitycb").prop("disabled", false);
+    $("#nodevisibilitycblbl").css("color", "black");
+  }else{
+    $("#nodevisibilitycb").prop("disabled", true);
+    $("#nodevisibilitycblbl").css("color", "gray");
+  }
+  
+  update_data_ntanalysis_visualization();
+}
+
+input.onchange = function() {
+  LINK_WEIGHT_THRESHOD = input.value;
+  slider.value = input.value;
+  if(LINK_WEIGHT_THRESHOD >1){
+    $("#nodevisibilitycb").prop("disabled", false);
+    $("#nodevisibilitycblbl").css("color", "black");
+
+  }else{
+    $("#nodevisibilitycb").prop("disabled", true);
+    $("#nodevisibilitycblbl").css("color", "gray");
+  }
+
+  update_data_ntanalysis_visualization();
+}
+
+graphstepselect.onchange = function() {
+  GRAPH_STEP_THRESHOD = graphstepselect.value;
+  update_data_ntanalysis_visualization();
+}
+
+componentsizethresholdselect.onchange = function() {
+  $( "#username" )[0].value = "All Users";
+  foci_user = "All Users";
+  GRAPH_COMPONENTS_SIZE_THRESHOLD = componentsizethresholdselect.value;
+  //update_data_ntanalysis_visualization();
+  prepare_data_component_size_threshold(data_raw);
+  update_data_ntanalysis_visualization();
+}
+
+communityselect.onchange = function() {
+  $( "#username" )[0].value = "All Users";
+  foci_user = "All Users";
+
+  update_data_ntanalysis_visualization();
+}
+
+function toggle_nodevisibilitycb(cb){
+  if(cb.checked){
+    LINKED_NODES_ONLY = true;
+    update_data_ntanalysis_visualization();
+  }else{
+    LINKED_NODES_ONLY = false;
+    update_data_ntanalysis_visualization();
+  }
+}
+
+function toggle_focinodecb(cb){
+  if(cb.checked){ 
+    LINKED_WITH_FOCI_NODE_ONLY = true;
+    update_data_ntanalysis_visualization();
+  }else{ 
+    LINKED_WITH_FOCI_NODE_ONLY = false;
+    update_data_ntanalysis_visualization();
+  }
+}
+
+function toggle_3dmodecb(cb){
+  if(cb.checked){
+    MODE3D = true;
+    update_ntanalysis_visualization();
+    if($("#ctrmap").prop("checked")){
+      $("#globe").show();
+      $("#mapbox").hide();
+    }else{ //($("#ctrnetwork").prop("checked"))
+      $("#network3d").show();
+      $("#network").hide();
+    }
+  }else{
+    MODE3D = false;
+    update_ntanalysis_visualization();
+    if($("#ctrmap").prop("checked")){
+      $("#globe").hide();
+
+      $("#mapbox").show();
+      myMap.invalidateSize();
+    }else{ //($("#ctrnetwork").prop("checked"))
+      $("#network3d").hide();
+      $("#network").show();
+    }
+  }
+}
+
+function toggle_mousequerycb(cb){
+  if(cb.checked){
+    MOUSE_QUERY = true;
+  }else{
+    MOUSE_QUERY = false;
+  }
+}
+
+/*
+function toggle_cytoscapecb(cb){
+  if(cb.checked){
+    $("#cynetwork").show();
+    $("#network").hide();
+  }else{
+    $("#cynetwork").hide();
+    $("#network").show();
+  }
+}*/
+
+function toggle_textnodecb(cb){
+  if(cb.checked){
+    TEXT_NODE_MODE = true;
+    update_visualization();
+  }else{
+    TEXT_NODE_MODE = false;
+    update_visualization();
+  }
+}
+
+function toggle_componentscb(cb){
+  if(cb.checked){
+    COMPONENTS_MODE = true;
+    update_ntanalysis_visualization();
+  }else{
+    COMPONENTS_MODE = false;
+    update_ntanalysis_visualization();
+  }
+}
+
+function toggle_clustercb(cb){
+  if(cb.checked){
+    CLUSTER_MODE = true;
+    update_ntanalysis_visualization();
+  }else{
+    CLUSTER_MODE = false;
+    update_ntanalysis_visualization();
+  }
+}
+
+function toggle_pagerankcb(cb){
+  if(cb.checked){
+    PAGERANK_MODE = true;
+    update_ntanalysis_visualization();
+  }else{
+    PAGERANK_MODE = false;
+    update_ntanalysis_visualization();
+  }
+}
+
+function toggle_nodesize_radio(radio){
+    var radio_ids = ["observationsrd", "identificationsrd", "pagerankrd"];
+    if(radio.id == radio_ids[0]){
+      PAGERANK_MODE = false;
+      IDENTIFICATIONS_MODE = false;
+      OBSERVATIONS_MODE = true;
+      update_visualization();
+    }else if(radio.id == radio_ids[1]){
+      PAGERANK_MODE = false;
+      IDENTIFICATIONS_MODE = true;
+      OBSERVATIONS_MODE = false;
+      update_visualization();
+    }
+    else{
+      PAGERANK_MODE = true;
+      IDENTIFICATIONS_MODE = false;
+      OBSERVATIONS_MODE = false;
+      update_ntanalysis_visualization();
+    }
+}
+
+function toggle_nodecolor_radio(radio){
+    var radio_ids = ["nodeidrd", "toplandcoverrd", "toptaxonrd", "componentidrd", "clusteridrd", "communityidrd"];
+    if(radio.id == radio_ids[0]){
+      LANDCOVER_MODE = false;
+      TAXON_MODE = false;
+      COMPONENTS_MODE = false;
+      CLUSTER_MODE = false;
+      COMMUNITY_MODE = false;
+      update_visualization();
+    }
+    else if(radio.id == radio_ids[1]){
+      LANDCOVER_MODE = true;
+      TAXON_MODE = false;
+      COMPONENTS_MODE = false;
+      CLUSTER_MODE = false;
+      COMMUNITY_MODE = false;
+      update_visualization();
+    }
+    else if(radio.id == radio_ids[2]){
+      LANDCOVER_MODE = false;
+      TAXON_MODE = true;
+      COMPONENTS_MODE = false;
+      CLUSTER_MODE = false;
+      COMMUNITY_MODE = false;
+      update_visualization();
+    }
+    else if(radio.id == radio_ids[3]){
+      LANDCOVER_MODE = false;
+      TAXON_MODE = false;
+      COMPONENTS_MODE = true;
+      CLUSTER_MODE = false;
+      COMMUNITY_MODE = false;
+      update_ntanalysis_visualization();
+    }
+    else if(radio.id == radio_ids[4]){
+      LANDCOVER_MODE = false;
+      TAXON_MODE = false;
+      COMPONENTS_MODE = false;
+      COMMUNITY_MODE = false;
+      CLUSTER_MODE = true;
+      update_ntanalysis_visualization();
+    }else{
+      COMPONENTS_MODE = false;
+      CLUSTER_MODE = false;
+      COMMUNITY_MODE = true;
+      update_ntanalysis_visualization();
+    }
+}
+
+function toggle_nodeshape_radio(radio){
+    var radio_ids = ["circlenoderd", "textnoderd", "imagenoderd"];
+    if(radio.id == radio_ids[0]){
+      TEXT_NODE_MODE = false;
+      IMAGE_NODE_MODE = false;
+      update_visualization();
+    }
+    else if(radio.id == radio_ids[1]){
+      TEXT_NODE_MODE = true;
+      IMAGE_NODE_MODE = false;
+      update_visualization();
+    }else{
+      TEXT_NODE_MODE = false;
+      IMAGE_NODE_MODE = true;
+      update_visualization();
+    }
+}
+
+</script>
+<script type="text/javascript" src="js/dragdiv.js"></script>
+<script type="text/javascript" src="js/d3histogram.js"></script>
+<script type="text/javascript" src="js/d3scatter.js"></script>
+<script type="text/javascript" src="js/d3pielandcover.js"></script>
+<script type="text/javascript" src="js/d3piekingdom.js"></script> 
+<script type="text/javascript" src="js/jLouvain.js"></script>
+<script type="text/javascript" src="js/d3network.js"></script>
+<script src="js/d3network_map.js"></script>
+
+</body>
+</html>
