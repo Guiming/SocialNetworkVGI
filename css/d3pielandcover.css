@@ -1,0 +1,39 @@
+#svg_pie_landcover {
+	width: 100%;
+	/*height: 100%;*/
+}
+
+#d3pie_landcover {
+  /*height: 310px;*/
+  margin: 0 auto;
+  position: relative;
+  display: block;
+  width: 500px;
+}
+
+.legendlandcover {
+  font-size: 11px;
+}
+
+/*
+rect {
+  cursor: pointer;
+  stroke-width: 2;
+}
+rect.disabled {
+  fill: transparent !important;
+}
+*/
+.tooltiplandcover {
+  background: #eee;
+  box-shadow: 0 0 5px #999999;
+  color: #333;
+  display: none;
+  font-size: 15px;
+  left: 130px;
+  padding: 0.5em;
+  position: absolute;
+  text-align: left;
+  top: 95px;
+  z-index: 10;
+}
