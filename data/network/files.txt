@@ -18,7 +18,6 @@ network_2022_wgt5_community4.csv
 network_2022_wgt5_community3.csv
 network_2022_wgt5_community2.csv
 network_2022_wgt5_community1.csv
-network_largest_component_2022_wgt5.csv
 network_2018_wgt5_community15.csv
 network_2018_wgt5_community14.csv
 network_2018_wgt5_community13.csv
@@ -34,4 +33,3 @@ network_2018_wgt5_community4.csv
 network_2018_wgt5_community3.csv
 network_2018_wgt5_community2.csv
 network_2018_wgt5_community1.csv
-network_largest_component_2018_wgt5.csv
