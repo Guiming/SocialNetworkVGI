@@ -59,27 +59,7 @@ function draw_map(){
     // BASE MAP
     var basemap_opentopo = L.tileLayer("https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png",{
       maxZoom: 20,
-      attribution: '&copy; <a href="https://opentopomap.org/">OpenTopoMap</a>'
-    }).addTo(myMap);
-
-    var basemap_gterrain = L.tileLayer('http://{s}.google.com/vt/lyrs=p&x={x}&y={y}&z={z}',{
-        maxZoom: 20,
-        subdomains:['mt0','mt1','mt2','mt3']
-    }).addTo(myMap);
-
-    var basemap_gstreet = L.tileLayer('http://{s}.google.com/vt/lyrs=m&x={x}&y={y}&z={z}',{
-        maxZoom: 20,
-        subdomains:['mt0','mt1','mt2','mt3']
-    }).addTo(myMap);
-
-    var basemap_gsat = L.tileLayer('http://{s}.google.com/vt/lyrs=s&x={x}&y={y}&z={z}',{
-        maxZoom: 20,
-        subdomains:['mt0','mt1','mt2','mt3']
-    }).addTo(myMap);
-
-    var basemap_ghybrid = L.tileLayer('http://{s}.google.com/vt/lyrs=s,h&x={x}&y={y}&z={z}',{
-        maxZoom: 20,
-        subdomains:['mt0','mt1','mt2','mt3']
+      attribution: '&copy; <a href="https://opentopomap.org/" target="_blank">OpenTopoMap</a>'
     }).addTo(myMap);
 
     var basemap_osm = L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",{
@@ -158,10 +138,6 @@ function draw_map(){
       //var nodesLayerB = createnodeslayer(gl_dataset.nodes).addTo(myMap);
 
       baseMaps = {        
-        "Google Terrain": basemap_gterrain,
-        "Google Streets": basemap_gstreet,
-        "Google Satellite": basemap_gsat,
-        "Google Hybrid": basemap_ghybrid,
         "BaseMap OSM": basemap_osm,
         "BaseMap Carto": basemap_carto,
         "BaseMap Dark": basemap_dark,
