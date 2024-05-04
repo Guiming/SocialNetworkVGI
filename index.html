@@ -10,7 +10,9 @@
 <link rel="stylesheet" href="https://jqueryui.com/resources/demos/style.css">
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css"/>
 <link href="https://fonts.googleapis.com/css?family=Open+Sans" rel="stylesheet">
-	
+
+ <script src="https://maps.google.com/maps/api/js?v=3&key=AIzaSyCYVjUrls2J38zEYEjQkZYn3PSUsDDJJ9U&amp&callback=Function.prototype"></script>
+
 <!-- Make sure you put this AFTER Leaflet's CSS -->
 <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
 <!-- Make sure you put this AFTER leaflet.js -->
@@ -283,35 +285,26 @@ $(document).ready(function(){
     <div id="histogram">
       
       <div id="params_histogram">
-        <input type="radio" id="node_histogram" name="histogram" unchecked onclick="toggle_histogram_radio(this)">
+            <input type="radio" id="node_histogram" name="histogram" unchecked onclick="toggle_histogram_radio(this)" title="Show frequency distribution of node attributes">
             <label for="histogram">Node</label>
-            <input type="radio" id="edge_histogram" name="histogram" checked onclick="toggle_histogram_radio(this)">
+            <input type="radio" id="edge_histogram" name="histogram" checked onclick="toggle_histogram_radio(this)" title="Show frequency distribution of edge attributes">
             <label for="histogram">Edge</label>
   
         &nbsp;|&nbsp;
   
         <label>Attribute: </label>
-        <select id="attr_histogram">
-          <option value="weight" selected>Id. interactions</option>
-          <option value="distance">Geographic distance</option>
+        <select id="attr_histogram" title="Attribute name">
+          <option value="weight" selected title="Number of species indentification interactions">Id. interactions</option>
+          <option value="distance" title="Geographic (great circle) distance">Geographic distance</option>
 
-          <option value="taxon_similarity_obs_ids">Taxon similarity</option>
-          <option value="landcover_similarity_obs_ids">Landcover similarity</option>
+          <option value="taxon_similarity_obs_ids" title="Species taxon composition similarity">Taxon similarity</option>
+          <option value="landcover_similarity_obs_ids" title="Land cover composition similarity">Landcover similarity</option>
           
-          <!--
-          <option value="taxon_similarity_obs_obs">TaxonSim[obs-obs]</option>
-          <option value="taxon_similarity_ids_obs">TaxonSim[ids-obs]</option>
-          <option value="taxon_similarity_ids_ids">TaxonSim[ids-ids]</option>
 
-          
-          <option value="landcover_similarity_obs_obs">LandcSim[obs-obs]</option>
-          <option value="landcover_similarity_ids_obs">LandcSim[ids-obs]</option>
-          <option value="landcover_similarity_ids_ids">LandcSim[ids-ids]</option>
-          -->
         </select>
         &nbsp;
         
-        <input type="number" min="5" max="200" step="5" value="20" id="nBin_histogram">
+        <input type="number" min="5" max="200" step="5" value="20" id="nBin_histogram" title="Number of histogram bins">
         <label>Bins</label>
       </div>
   
@@ -330,49 +323,29 @@ $(document).ready(function(){
   
           <div id="params_scatter">
             <span>
-              <input type="radio" id="node_scatter" name="scatter" unchecked onclick="toggle_scatter_radio(this)">
+              <input type="radio" id="node_scatter" name="scatter" unchecked onclick="toggle_scatter_radio(this)" title="Show scatter plot for node attributes">
               <label for="scatter">Node</label>
-              <input type="radio" id="edge_scatter" name="scatter" checked onclick="toggle_scatter_radio(this)">
+              <input type="radio" id="edge_scatter" name="scatter" checked onclick="toggle_scatter_radio(this)" title="Show scatter plot for edge attributes">
               <label for="scatter">Edge</label>
   
               &nbsp;|&nbsp;
 
               <label>Y</label>
-              <select id="attr_scatter_y">
-                  <option value="weight" selected>Id.  interactions</option>
-                  <option value="distance">Geographic distance</option>
-                  <option value="taxon_similarity_obs_ids">Taxon similarity</option>
-                  <option value="landcover_similarity_obs_ids">Landcover similarity</option>
-                  <!--
-                  <option value="taxon_similarity_obs_ids">TaxonSim[obs-ids]</option>
-                  <option value="taxon_similarity_obs_obs">TaxonSim[obs-obs]</option>
-                  <option value="taxon_similarity_ids_obs">TaxonSim[ids-obs]</option>
-                  <option value="taxon_similarity_ids_ids">TaxonSim[ids-ids]</option>
+              <select id="attr_scatter_y" title="Y variable">
+                  <option value="weight" selected  title="Number of species indentification interactions">Id.  interactions</option>
+                  <option value="distance"  title="Geographic (great circle) distance">Geographic distance</option>
+                  <option value="taxon_similarity_obs_ids"  title="Species taxon composition similarity">Taxon similarity</option>
+                  <option value="landcover_similarity_obs_ids" title="Land cover composition similarity">Landcover similarity</option>
 
-                  <option value="landcover_similarity_obs_ids">LandcSim[obs-ids]</option>
-                  <option value="landcover_similarity_obs_obs">LandcSim[obs-obs]</option>
-                  <option value="landcover_similarity_ids_obs">LandcSim[ids-obs]</option>
-                  <option value="landcover_similarity_ids_ids">LandcSim[ids-ids]</option>
-                  -->
               </select>
               &nbsp;
               <label>X</label>
-              <select id="attr_scatter_x">
-                  <option value="weight">Id.  interactions</option>
-                  <option value="distance" selected>Geographic distance</option>
-                  <option value="taxon_similarity_obs_ids">Taxon similarity</option>
-                  <option value="landcover_similarity_obs_ids">Landcover similarity</option>
-                  <!--
-                  <option value="taxon_similarity_obs_ids">TaxonSim[obs-ids]</option>
-                  <option value="taxon_similarity_obs_obs">TaxonSim[obs-obs]</option>
-                  <option value="taxon_similarity_ids_obs">TaxonSim[ids-obs]</option>
-                  <option value="taxon_similarity_ids_ids">TaxonSim[ids-ids]</option>
+              <select id="attr_scatter_x" title="X variable">
+                  <option value="weight"  title="Number of species indentification interactions">Id.  interactions</option>
+                  <option value="distance" selected  title="Geographic (great circle) distance">Geographic distance</option>
+                  <option value="taxon_similarity_obs_ids"  title="Species taxon composition similarity">Taxon similarity</option>
+                  <option value="landcover_similarity_obs_ids"  title="Land cover composition similarity">Landcover similarity</option>
 
-                  <option value="landcover_similarity_obs_ids">LandcSim[obs-ids]</option>
-                  <option value="landcover_similarity_obs_obs">LandcSim[obs-obs]</option>
-                  <option value="landcover_similarity_ids_obs">LandcSim[ids-obs]</option>
-                  <option value="landcover_similarity_ids_ids">LandcSim[ids-ids]</option>
-                  -->
               </select>
             </span>
             <br>
@@ -381,7 +354,7 @@ $(document).ready(function(){
                   <input id="binningxcb" type="checkbox" unchecked onchange=toggle_binningxcb(this) title="Correlation based on binned X.">
                   <label for="binningxcb">Bin X</label>
                   &nbsp;
-                  <input type="number" min="1" max="200" step="5" value="20" id="nBin_scatter" disabled onchange=draw_scatter()>
+                  <input type="number" min="1" max="200" step="5" value="20" id="nBin_scatter" disabled onchange=draw_scatter() title="Number of bins">
                   <label>Bins</label>
               </span>
           </div>
@@ -410,37 +383,37 @@ $(document).ready(function(){
         <table>
             <tr>
                 <td id="networkconfigs">
-                    <input id="ctrconfig" type="checkbox" checked onchange=toggle_ctrl_cb(this,'configpanel')>
+                    <input id="ctrconfig" type="checkbox" checked onchange=toggle_ctrl_cb(this,'configpanel') title="Show/hide Configurations panel">
                     <label for="ctrconfig">Configs</label>
                 </td>
 
                 <td>
                     <!--<label>View:</label>-->
-                    <input type="radio" id="ctrnetwork" name="viewrd" checked onchange=toggle_view_rd(this)>
+                    <input type="radio" id="ctrnetwork" name="viewrd" checked onchange=toggle_view_rd(this)  title="Show network">
                     <label for="ctrnetwork">Network</label>
-                    <input  type="radio" id="ctrmap" name="viewrd" onchange=toggle_view_rd(this)>
+                    <input  type="radio" id="ctrmap" name="viewrd" onchange=toggle_view_rd(this) title="Show map">
                     <label for="ctrnetmap">Map</label>
                     
                     &nbsp;|&nbsp;
 
                     <!--<label>Mode:</label>-->
-                    <input type="radio" id="ctr3d" name="moderd" checked onchange=toggle_mode_rd(this)>
+                    <input type="radio" id="ctr3d" name="moderd" checked onchange=toggle_mode_rd(this) title="Show in 3D">
                     <label for="ctr3d">3D</label>
-                    <input  type="radio" id="ctr2d" name="moderd" onchange=toggle_mode_rd(this)>
+                    <input  type="radio" id="ctr2d" name="moderd" onchange=toggle_mode_rd(this) title="Show in 2D">
                     <label for="ctr2d">2D</label>
 
                   </td>
 
                 <td>
                     <!--<label>Mode:</label>-->
-                    <input type="checkbox" id="ctrhistogram" name="histogramcb" unchecked onchange=toggle_ctrl_cb(this,'histogrampanel')>
+                    <input type="checkbox" id="ctrhistogram" name="histogramcb" unchecked onchange=toggle_ctrl_cb(this,'histogrampanel') title="Show/hide distribution of network attributes">
                     <label for="ctrhistogram">Distribution</label>
-                    <input  type="checkbox" id="ctrscatter" name="scattercb" unchecked onchange=toggle_ctrl_cb(this,'scatterpanel')>
+                    <input  type="checkbox" id="ctrscatter" name="scattercb" unchecked onchange=toggle_ctrl_cb(this,'scatterpanel') title="Show/hide correlation of network attributes">
                     <label for="ctrscatter">Correlation</label>
                 </td>
 
                 <td>
-                    <input id="ctrattri" type="checkbox" unchecked onchange=toggle_ctrl_cb(this,'attripanel')><label for="ctrattri">Attribution </label>
+                    <input id="ctrattri" type="checkbox" unchecked onchange=toggle_ctrl_cb(this,'attripanel') title="Show/hide attribution"><label for="ctrattri">Attribution </label>
                 </td>
 
             </tr>
@@ -468,11 +441,11 @@ $(document).ready(function(){
             -->
 
               <label for="csvfilelist" id="csvfilelistlabel">Dataset </label>
-              <select id="csvfilelist" style="width:70%;">
+              <select id="csvfilelist" style="width:70%;" title="Choose network dataset">
                 <option>network.csv</option>
               </select>
 
-              <input id="submit" type="button" value="Update" onclick=update_all()></p>
+              <input id="submit" type="button" value="Update" onclick=update_all() title="Load network dataset"></p>
         </div>
 
       </div>
@@ -485,50 +458,50 @@ $(document).ready(function(){
 
           <div id="filters">
             <p>
-              <input id="geocb" type="checkbox" unchecked onchange=toggle_geocb(this)>
+              <input id="geocb" type="checkbox" unchecked onchange=toggle_geocb(this) title="Include only nodes with geographic location">
               <label>Geo nodes only</label>
             </p>
             <p>
               <label for="distinput" id="distlabel">Distance (km) &le; </label>
-              <input type="number" id="distinput" value="100", min="1" max="100" disabled>
+              <input type="number" id="distinput" value="100", min="1" max="100" disabled title="Include only edges with geographic distance shorter than this value">
               &nbsp;
               <label id="distmin">1</label>
-              <input type="range" min="1" max="100" value="100" class="slider" id="distslider" disabled>
+              <input type="range" min="1" max="100" value="100" class="slider" id="distslider" disabled  title="Include only edges with geographic distance shorter than this value">
               <label id="distmax">100</label>
             </p>
             <p style="display:block;">
               <label for="componentsizethreshold" id="componentsizethresholdlabel">Components with size &ge; </label>
-              <select id="componentsizethreshold">
+              <select id="componentsizethreshold"  title="Include only connected components with number of nodes no fewer than this value">
                 <option value="0">1 node - (all components)</option>
               </select>
             </p>
 
             <p>
               <label for="community" id="communitylabel">Detected communities</label>
-              <select id="community">
+              <select id="community"  title="Choose one community (or all communities)">
                 <option value="-1">All communities</option>
               </select>
             </p>
 
             <p>
                 <label for="thresholdinput" id="thresholdlabel">Link weight &ge; </label>
-                <input type="number" id="thresholdinput" value="1", min="1" max="100">
+                <input type="number" id="thresholdinput" value="1", min="1" max="100" title="Include only edges with weights no smaller than this value">
                 &nbsp;
                 <label id="thresholdmin">1</label>
-                <input type="range" min="1" max="100" value="1" class="slider" id="thresholdslider">
+                <input type="range" min="1" max="100" value="1" class="slider" id="thresholdslider" title="Include only edges with weights no smaller than this value">
                 <label id="thresholdmax">100</label>
             </p>
 
             <p>
-              <label for="username">Foci node: </label><input id="username" value="All Users">
+              <label for="username">Foci node: </label><input id="username" value="All Users" title="Include only nodes connected to a foci node">
             </p>
             <p>
-              <input id="focinodecb" type="checkbox" unchecked onchange=toggle_focinodecb(this)>
+              <input id="focinodecb" type="checkbox" unchecked onchange=toggle_focinodecb(this) title="Include only nodes directly connected to the foci node">
               <label id="focinodecblbl" for="focinodecb">Links with foci only</label>
               &nbsp;|&nbsp;
               <label for="graphstep" id="graphsteplabel">Steps from foci &le; </label>
               <!--<input type="number" id="graphstep" value="1", min="1" max="10"> -->
-              <select id="graphstep">
+              <select id="graphstep"  title="Include only nodes that are N steps away from the foci node">
                 <option value='1'>1</option>
               </select>
             </p>
@@ -545,38 +518,38 @@ $(document).ready(function(){
           <div id="options">
             <p>
               <label>Size:</label>
-              <input type="radio" id="observationsrd" name="nodesize" onchange="toggle_nodesize_radio(this)">
+              <input type="radio" id="observationsrd" name="nodesize" onchange="toggle_nodesize_radio(this)" title="Node size by number of species observations">
               <label for="nodesize">Observations</label>
-              <input type="radio" id="identificationsrd" name="nodesize" checked onchange="toggle_nodesize_radio(this)">
+              <input type="radio" id="identificationsrd" name="nodesize" checked onchange="toggle_nodesize_radio(this)"  title="Node size by number of species identifications">
               <label for="nodesize">Identifications</label>
-              <input type="radio" id="pagerankrd" name="nodesize" onchange="toggle_nodesize_radio(this)">
+              <input type="radio" id="pagerankrd" name="nodesize" onchange="toggle_nodesize_radio(this)"  title="Node size by PageRank score">
               <label for="nodesize">Pagerank</label>
             </p>
 
             <p>
             <label>Color:</label>
-            <input type="radio" id="nodeidrd" name="nodecolor" checked onchange="toggle_nodecolor_radio(this)">
+            <input type="radio" id="nodeidrd" name="nodecolor" checked onchange="toggle_nodecolor_radio(this)"  title="Node color by contributor id">
             <label for="nodecolor">ID</label>            
-            <input type="radio" id="componentidrd" name="nodecolor" onchange="toggle_nodecolor_radio(this)">
+            <input type="radio" id="componentidrd" name="nodecolor" onchange="toggle_nodecolor_radio(this)"  title="Node color by connected component id">
             <label for="nodecolor">Component</label>
-            <input type="radio" id="clusteridrd" name="nodecolor" onchange="toggle_nodecolor_radio(this)">
+            <input type="radio" id="clusteridrd" name="nodecolor" onchange="toggle_nodecolor_radio(this)"  title="Node color by cluster id">
             <label for="nodecolor">Cluster</label>
-            <input type="radio" id="communityidrd" name="nodecolor" onchange="toggle_nodecolor_radio(this)">
+            <input type="radio" id="communityidrd" name="nodecolor" onchange="toggle_nodecolor_radio(this)"  title="Node color by community id">
             <label for="nodecolor">Community</label>
             <br>&emsp;&emsp;&ensp;
-            <input type="radio" id="toplandcoverrd" name="nodecolor" onchange="toggle_nodecolor_radio(this)">
+            <input type="radio" id="toplandcoverrd" name="nodecolor" onchange="toggle_nodecolor_radio(this)"  title="Node color by majority land cover">
             <label for="nodecolor">Majority landcover</label>
-            <input type="radio" id="toptaxonrd" name="nodecolor" onchange="toggle_nodecolor_radio(this)">
+            <input type="radio" id="toptaxonrd" name="nodecolor" onchange="toggle_nodecolor_radio(this)"   title="Node color by majority species taxon kingdom">
             <label for="nodecolor">Majority species taxon</label>
           </p>
 
           <p>
               <label>Shape:</label>
-              <input type="radio" id="circlenoderd" name="nodeshape" checked onchange="toggle_nodeshape_radio(this)">
+              <input type="radio" id="circlenoderd" name="nodeshape" checked onchange="toggle_nodeshape_radio(this)" title="Nodes are drawn as filled circles">
               <label id="circlenoderdlabel" for="nodeshape">Circle</label>
-              <input type="radio" id="textnoderd" name="nodeshape" onchange="toggle_nodeshape_radio(this)">
+              <input type="radio" id="textnoderd" name="nodeshape" onchange="toggle_nodeshape_radio(this)" title="Nodes are drawn as texts (contributor logins)">
               <label id="textnoderdlabel" for="nodeshape">Text</label>
-              <input type="radio" id="imagenoderd" name="nodeshape" onchange="toggle_nodeshape_radio(this)">
+              <input type="radio" id="imagenoderd" name="nodeshape" onchange="toggle_nodeshape_radio(this)" title="Nodes are drawn as images (contributor profile photo)">
               <label id="imagenoderdlabel" for="nodeshape">Image</label>
           </p>
           <p>
@@ -584,10 +557,10 @@ $(document).ready(function(){
               <input id="3dmode" type="checkbox" checked onchange=toggle_3dmodecb(this)>
               <label id="3dmodelabel" for="3dmode">3D</label>
               &nbsp;|&nbsp; -->
-              <input id="mousequery" type="checkbox" checked onchange=toggle_mousequerycb(this)>
+              <input id="mousequery" type="checkbox" checked onchange=toggle_mousequerycb(this) title="Show (or not show) popup info window when hovering over nodes/edges">
               <label for="mousequery">Mouseover popup</label>
                 &nbsp;|&nbsp;
-              <input id="nodevisibilitycb" type="checkbox" unchecked disabled onchange=toggle_nodevisibilitycb(this)>
+              <input id="nodevisibilitycb" type="checkbox" unchecked disabled onchange=toggle_nodevisibilitycb(this) title="Include/exclude isolated nodes">
               <label id="nodevisibilitycblbl" for="nodevisibilitycb">No dangling nodes</label>
           </p>
         </div>
@@ -616,59 +589,49 @@ function toggle_scatter_radio(radio){
   if(radio.id==="node_scatter"){
 
     $('#attr_scatter_x')
-      .append($("<option selected></option>").attr("value", "size").text("Species identifications"));
+      .append($("<option selected title=\"Number of species identifications\"></option>").attr("value", "size").text("Species identifications"));
     $('#attr_scatter_x')
-      .append($("<option></option>").attr("value", "resgradobs").text("Species observations"));
+      .append($("<option title=\"Number of species observations\"></option>").attr("value", "resgradobs").text("Species observations"));
     $('#attr_scatter_x')
-      .append($("<option></option>").attr("value", "pagerank").text("Page Rank"));
+      .append($("<option title=\"PageRank score\"></option>").attr("value", "pagerank").text("Page Rank"));
     $('#attr_scatter_x')
-    .append($("<option></option>").attr("value", "degree").text("Degree"));
+    .append($("<option title=\"Total (in and out) degree\"></option>").attr("value", "degree").text("Degree"));
     $('#attr_scatter_x')
-    .append($("<option></option>").attr("value", "indegree").text("In-degree"));
+    .append($("<option title=\"In dgree\"></option>").attr("value", "indegree").text("In-degree"));
     $('#attr_scatter_x')
-    .append($("<option></option>").attr("value", "outdegree").text("Out-degree"));
-    /*
-    $('#attr_scatter_x')
-    .append($("<option></option>").attr("value", "betweenness").text("Betweenness"));
-    $('#attr_scatter_x')
-    .append($("<option></option>").attr("value", "closeness").text("Closeness")); 
-    */
+    .append($("<option title=\"Out degree\"></option>").attr("value", "outdegree").text("Out-degree"));
+ 
     $('#attr_scatter_y')
-      .append($("<option></option>").attr("value", "size").text("Species identifications"));
+      .append($("<option title=\"Number of species identifications\"></option>").attr("value", "size").text("Species identifications"));
     $('#attr_scatter_y')
-      .append($("<option selected></option>").attr("value", "resgradobs").text("Species observations"));
+      .append($("<option selected title=\"Number of species observations\"></option>").attr("value", "resgradobs").text("Species observations"));
     $('#attr_scatter_y')
-      .append($("<option></option>").attr("value", "pagerank").text("Page Rank"));
+      .append($("<option title=\"PageRank score\"></option>").attr("value", "pagerank").text("Page Rank"));
     $('#attr_scatter_y')
-    .append($("<option></option>").attr("value", "degree").text("Degree"));
+    .append($("<option title=\"Total (in and out) degree\"></option>").attr("value", "degree").text("Degree"));
     $('#attr_scatter_y')
-    .append($("<option></option>").attr("value", "indegree").text("In-degree"));
+    .append($("<option title=\"In dgree\"></option>").attr("value", "indegree").text("In-degree"));
     $('#attr_scatter_y')
-    .append($("<option></option>").attr("value", "outdegree").text("Out-degree"));
-    /*
-    $('#attr_scatter_y')
-    .append($("<option></option>").attr("value", "betweenness").text("Betweenness"));
-    $('#attr_scatter_y')
-    .append($("<option></option>").attr("value", "closeness").text("Closeness")); 
-    */
+    .append($("<option title=\"Out degree\"></option>").attr("value", "outdegree").text("Out-degree"));
+
   }else{
     $('#attr_scatter_x')
-      .append($("<option selected></option>").attr("value", "distance").text("Geographic distance"));
+      .append($("<option selected  title=\"Geographic (great circle) distance\"></option>").attr("value", "distance").text("Geographic distance"));
     $('#attr_scatter_x')
-      .append($("<option></option>").attr("value", "weight").text("Id. interactions"));
+      .append($("<option title=\"Number of species indentification interactions\"></option>").attr("value", "weight").text("Id. interactions"));
     $('#attr_scatter_x')
-      .append($("<option></option>").attr("value", "taxon_similarity_obs_ids").text("Taxon similarity"));
+      .append($("<option title=\"Species taxon composition similarity\"></option>").attr("value", "taxon_similarity_obs_ids").text("Taxon similarity"));
     $('#attr_scatter_x')
-      .append($("<option></option>").attr("value", "landcover_similarity_obs_ids").text("Landcover similarity"));
+      .append($("<option title=\"Land cover composition similarity\"></option>").attr("value", "landcover_similarity_obs_ids").text("Landcover similarity"));
 
     $('#attr_scatter_y')
-      .append($("<option></option>").attr("value", "distance").text("Geographic distance"));      
+      .append($("<option title=\"Geographic (great circle) distance\"></option>").attr("value", "distance").text("Geographic distance"));      
     $('#attr_scatter_y')
-      .append($("<option selected></option>").attr("value", "weight").text("Id. interactions"));
+      .append($("<option selected title=\"Number of species indentification interactions\"></option>").attr("value", "weight").text("Id. interactions"));
     $('#attr_scatter_y')
-      .append($("<option></option>").attr("value", "taxon_similarity_obs_ids").text("Taxon similarity"));
+      .append($("<option title=\"Species taxon composition similarity\"></option>").attr("value", "taxon_similarity_obs_ids").text("Taxon similarity"));
     $('#attr_scatter_y')
-      .append($("<option></option>").attr("value", "landcover_similarity_obs_ids").text("Landcover similarity"));
+      .append($("<option title=\"Land cover composition similarity\"></option>").attr("value", "landcover_similarity_obs_ids").text("Landcover similarity"));
   }
   draw_scatter();
 }
@@ -705,45 +668,40 @@ function toggle_histogram_radio(radio){
 
   if(radio.id==="node_histogram"){
     $('#attr_histogram')
-      .append($("<option selected></option>").attr("value", "resgradobs").text("Species observations"));
+      .append($("<option selected title=\"Number of species observations\"></option>").attr("value", "resgradobs").text("Species observations"));
     $('#attr_histogram')
-      .append($("<option></option>").attr("value", "size").text("Species identifications"));
+      .append($("<option title=\"Number of species identifications\"></option>").attr("value", "size").text("Species identifications"));
     $('#attr_histogram')
-    .append($("<option></option>").attr("value", "pagerank").text("Page Rank"));
+    .append($("<option title=\"PageRank score\"></option>").attr("value", "pagerank").text("Page Rank"));
 
     $('#attr_histogram')
-    .append($("<option></option>").attr("value", "degree").text("Degree"));
+    .append($("<option title=\"Total (in and out) degree\"></option>").attr("value", "degree").text("Degree"));
     $('#attr_histogram')
-    .append($("<option></option>").attr("value", "indegree").text("In-degree"));
+    .append($("<option title=\"In dgree\"></option>").attr("value", "indegree").text("In-degree"));
     $('#attr_histogram')
-    .append($("<option></option>").attr("value", "outdegree").text("Out-degree"));
-    /*
+    .append($("<option title=\"Out dgree\"></option>").attr("value", "outdegree").text("Out-degree"));
+ 
     $('#attr_histogram')
-    .append($("<option></option>").attr("value", "betweenness").text("Betweenness"));
-    $('#attr_histogram')
-    .append($("<option></option>").attr("value", "closeness").text("Closeness"));  
-    */
-    $('#attr_histogram')
-    .append($("<option></option>").attr("value", "landcover_distribution_obs_vector").text("Landcover (obs)"));
+    .append($("<option title=\"Land cover composition (observers)\"></option>").attr("value", "landcover_distribution_obs_vector").text("Landcover (obs)"));
 
     $('#attr_histogram')
-    .append($("<option></option>").attr("value", "landcover_distribution_ids_vector").text("Landcover (ids)"));
+    .append($("<optiontitle=\"Land cover composition (identifiers)\"></option>").attr("value", "landcover_distribution_ids_vector").text("Landcover (ids)"));
 
     $('#attr_histogram')
-    .append($("<option></option>").attr("value", "taxon_distribution_obs_vector").text("Taxon (obs)"));
+    .append($("<option title=\"Species taxon composition (observers)\"></option>").attr("value", "taxon_distribution_obs_vector").text("Taxon (obs)"));
 
     $('#attr_histogram')
-    .append($("<option></option>").attr("value", "taxon_distribution_ids_vector").text("Taxon (ids)"));
+    .append($("<option title=\"Species taxon composition (identifiers)\"></option>").attr("value", "taxon_distribution_ids_vector").text("Taxon (ids)"));
 
   }else{
     $('#attr_histogram')
-      .append($("<option selected></option>").attr("value", "weight").text("Id. interactions"));
+      .append($("<option selected title=\"Number of species indentification interactions\"></option>").attr("value", "weight").text("Id. interactions"));
     $('#attr_histogram')
-      .append($("<option></option>").attr("value", "distance").text("Geographic distance"));
+      .append($("<option title=\"Geographic (great circle) distance\"></option>").attr("value", "distance").text("Geographic distance"));
     $('#attr_histogram')
-      .append($("<option></option>").attr("value", "taxon_similarity_obs_ids").text("Taxon similarity"));
+      .append($("<option title=\"Species taxon composition similarity\"></option>").attr("value", "taxon_similarity_obs_ids").text("Taxon similarity"));
     $('#attr_histogram')
-      .append($("<option></option>").attr("value", "landcover_similarity_obs_ids").text("Landcover similarity"));
+      .append($("<option title=\"Land cover composition similarity\"></option>").attr("value", "landcover_similarity_obs_ids").text("Landcover similarity"));
   }
 
   draw_histogram();
@@ -874,6 +832,10 @@ input.onchange = function() {
 
 graphstepselect.onchange = function() {
   GRAPH_STEP_THRESHOD = graphstepselect.value;
+  if(GRAPH_STEP_THRESHOD > 1){
+    $("#focinodecb").prop( "checked", false );
+    LINKED_WITH_FOCI_NODE_ONLY = false;
+  }
   update_data_ntanalysis_visualization();
 }
 
@@ -906,6 +868,8 @@ function toggle_nodevisibilitycb(cb){
 function toggle_focinodecb(cb){
   if(cb.checked){ 
     LINKED_WITH_FOCI_NODE_ONLY = true;
+    $("#graphstep").val(1);
+    GRAPH_STEP_THRESHOD = 1;
     update_data_ntanalysis_visualization();
   }else{ 
     LINKED_WITH_FOCI_NODE_ONLY = false;
