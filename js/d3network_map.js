@@ -57,11 +57,6 @@ function draw_map(){
     }); //.addTo(myMap);
    
     // BASE MAP
-    var basemap_opentopo = L.tileLayer("https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png",{
-      maxZoom: 20,
-      attribution: '&copy; <a href="https://opentopomap.org/" target="_blank">OpenTopoMap</a>'
-    }).addTo(myMap);
-
     var basemap_osm = L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",{
           maxZoom: 20,
           attribution: '&copy; <a href="https://openstreetmap.org/copyright">OpenStreetMap contributors</a>'
@@ -75,6 +70,11 @@ function draw_map(){
     var basemap_dark = L.tileLayer('https://cartodb-basemaps-d.global.ssl.fastly.net/dark_all/{z}/{x}/{y}@2x.png', {
       maxZoom: 20,
       id: 'darkmatter'
+    }).addTo(myMap);
+
+    var basemap_opentopo = L.tileLayer("https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png",{
+      maxZoom: 20,
+      attribution: '&copy; <a href="https://opentopomap.org/" target="_blank">OpenTopoMap</a>'
     }).addTo(myMap);
 
     ///*
