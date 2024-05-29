@@ -137,11 +137,11 @@ function draw_map(){
 
       //var nodesLayerB = createnodeslayer(gl_dataset.nodes).addTo(myMap);
 
-      baseMaps = {        
-        "BaseMap OSM": basemap_osm,
+      baseMaps = {                
         "BaseMap Carto": basemap_carto,
         "BaseMap Dark": basemap_dark,
-        "BaseMap Topo": basemap_opentopo
+        "BaseMap Topo": basemap_opentopo,
+        "BaseMap OSM": basemap_osm
       };
 
       //var linksLayerB = createlinkslayer(gl_dataset.links).addTo(myMap);
