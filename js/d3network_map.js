@@ -82,24 +82,7 @@ function draw_map(){
 
 
 ///////////////////////// LINKS LAYER //////////////////////////
-    /*
-    linksLayer = L.geoJSON([], {
-        onEachFeature: function(feature, layer){
-          layer.bindPopup(linktiphtml(feature.properties));
-          layer.setStyle({
-            color: "blue",
-            weight: linkwidth(feature.properties),
-            opacity: 0.5,
-          })
-        }
-      }).addTo(myMap);
-      */
-      /*
-      if(linksLayer) linksLayer = null;
-      linkslyr = createlinkslayer(gl_dataset.links);
-      linksLayer = linkslyr;
-      linksLayer.addTo(myMap);
-      */
+    
 
       linksLayer = createlinkslayer(gl_dataset.links, gl_dataset.nodes).addTo(myMap);
 
@@ -107,40 +90,16 @@ function draw_map(){
 
 
 ///////////////////////////NODES LAYER /////////////////////
-      /*
-      nodesLayer = L.geoJSON([], {
-      		onEachFeature: function(feature, layer){
-            layer.bindPopup(nodetiphtml(feature.properties));
-          },
-
-      		pointToLayer: function (feature, latlng) {
-      			return L.circleMarker(latlng, {
-      				radius: nodesize(feature.properties),
-      				fillColor: nodecolor(feature.properties),
-      				color: "#ccc",
-      				weight: 0.1,
-      				opacity: 1,
-      				fillOpacity: 0.8
-      			});
-      		}
-      	}).addTo(myMap);
-        */
-
-        /*
-      if(nodesLayer) nodesLayer = null;
-      var nodeslyr = createnodeslayer(gl_dataset.nodes);
-      nodesLayer = nodeslyr;
-      nodesLayer.addTo(myMap);
-      */
+      
 
       nodesLayer = createnodeslayer(gl_dataset.nodes,gl_dataset.links).addTo(myMap);
 
       //var nodesLayerB = createnodeslayer(gl_dataset.nodes).addTo(myMap);
 
-      baseMaps = {                
-        "BaseMap Carto": basemap_carto,
-        "BaseMap Dark": basemap_dark,
+      baseMaps = {                    
         "BaseMap Topo": basemap_opentopo,
+          "BaseMap Dark": basemap_dark,
+         "BaseMap Carto": basemap_carto,
         "BaseMap OSM": basemap_osm
       };
 
