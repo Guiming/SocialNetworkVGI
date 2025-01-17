@@ -56,8 +56,17 @@ function draw_scatter() {
     }
 
     // computing correlation coefficient using jstat.js //https://github.com/jstat/jstat
-    var correlation_coefficient = jStat.corrcoeff(extract_attributes(data, attr_x), extract_attributes(data, attr_y));
-    console.log("Pearson's correlation coefficient: ", correlation_coefficient)
+    x = extract_attributes(data, attr_x);
+    y = extract_attributes(data, attr_y);
+    var r = jStat.corrcoeff(x, y);
+    //var r = jStat.spearmancoeff(x, y);
+    const n = x.length;
+    const t = r * Math.sqrt((n - 2) / (1 - r * r));
+
+    // Calculate the p-value using the t-distribution
+    var pValue = jStat.ttest(t, n - 2);
+    console.log("Pearson's correlation coefficient: ", r)
+    console.log("P value: ", pValue)
 
     // set the dimensions and margins of the graph
     var margin = {top: 10, right: 30, bottom: 30, left: 60},
@@ -155,11 +164,11 @@ function draw_scatter() {
         
         statspanel.transition()
         .duration(100)
-        .style("right", "120px")
+        .style("right", "80px")
         .style("top", "150px")
         .style('display', 'block');
     
-        statspanel.html("Correlation coefficient: " + correlation_coefficient.toFixed(3));
+        statspanel.html("Correlation coefficient: " + r.toFixed(3) + " (p-value: " + pValue.toFixed(3) + ")");
         
 
     // A function that change this tooltip when the user hover a point.
