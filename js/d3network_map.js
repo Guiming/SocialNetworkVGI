@@ -34,6 +34,7 @@ function draw_map(){
       subdomains: 'abc',
       noWrap: false,
       continuousWorld: true,
+       opacity: 0.5,
 
       attribution:
         '<a href="https://wiki.earthdata.nasa.gov/display/GIBS" target="_blank">' +
@@ -50,6 +51,7 @@ function draw_map(){
       subdomains: 'abc',
       noWrap: false,
       continuousWorld: true,
+      opacity: 0.5,
 
       attribution:
         '<a href="https://wiki.earthdata.nasa.gov/display/GIBS" target="_blank">' +
