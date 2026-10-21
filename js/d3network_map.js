@@ -64,7 +64,7 @@ function draw_map(){
           attribution: '&copy; <a href="https://openstreetmap.org/copyright">OpenStreetMap contributors</a>'
         }).addTo(myMap);
 
-    var basemap_carto = L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/{id}/{z}/{x}/{y}.png', {
+    var basemap_carto = L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/{id}/{z}/{x}/{y}.png?key=cb1_4r4k_1_cdec27c25eb9a3e0fb82ac87', {
       maxZoom: 20,
       id: 'voyager'
     }).addTo(myMap);
